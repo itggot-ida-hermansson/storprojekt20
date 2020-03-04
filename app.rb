@@ -1,24 +1,19 @@
 require 'sinatra'
 require 'slim'
+require 'sqlite3'
 
 get('/') do
     slim(:index)
 end
 
 post('/login') do
-    "Nu är du inloggad"
+    userId=params[:user]
+    pwd=params[:pass]
+
+    db = SQLite3::Database.new("db/hej.db")
+    db.results_as_hash = true
+    user = db.execute("SELECT * FROM user where userid=?", userId)
+    allUser = db.execute("SELECT * FROM user")
+    slim(:start, locals:{user:user,users:allUser})
   end
-
-get('/anders') do
-    temp = params[:temp]
-    if temp.to_i > 20
-        "Väldigt varmt"
-    else
-      "Brr...kallt"  
-    end  
-end  
-
-get('/ida') do
-      slim(:anders)
-end    
 

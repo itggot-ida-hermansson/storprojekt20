@@ -1,0 +1,11 @@
+div(class='grid-container')
+  div(class='top-cell')
+    h1 Ja, men...säg Hej!
+  div(class='left-cell')
+    ol
+      - users.each do |u|
+        li(class='friend' onclick='alert("Hej")') = u["name"]
+  div(class='right-cell')
+    p(class='init-messages-text') Välj någon att säga Hej! till ......
+  </div  
+          

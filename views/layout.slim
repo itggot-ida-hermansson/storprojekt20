@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 html lang="en"
+link href="css/style.css"
   head
     meta charset="UTF-8"/
     meta name="viewport" content="width=device-width, initial-scale=1.0"/
@@ -7,5 +8,16 @@ html lang="en"
     link rel="stylesheet" href="css/style.css"/
     title Hej super chat
   body
-    ==yield
+    div(class='grid-container')
+      div(class='top-cell')
+        h1 Ja, men...säg Heeeej! 
+        -if user != nil
+          p logged in as user #{user["name"]}
+      div(class='left-cell')
+        - if users != nil
+          ol
+            - users.each do |u|
+              li(class='friend') = u["name"]
+      ==yield
+       
     

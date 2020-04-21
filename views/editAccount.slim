@@ -1,0 +1,22 @@
+div(class="account")
+    p Mitt konto 
+    from action="/user/save" method="post"
+    p
+        label Användarnamn
+        input name="userid" value=user['userid']
+    p
+        label Passord
+        input type="text" name= "pass" value=user['pass']
+    p
+        label Namn
+        input type="text" name= "namn" value=user['namn']
+    p
+        label Land
+        input type="text" name= "country" value=user['country']
+    p
+        label Gatuadress
+        input type="text" name= "address1" value=user['address1']
+    p
+        label Postaddress
+        input type="text" name= "address2" value=user['address2']
+    input type="submit" value="spara" autocomplete="off"

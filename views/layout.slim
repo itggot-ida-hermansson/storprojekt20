@@ -8,16 +8,21 @@ link href="css/style.css"
     link rel="stylesheet" href="css/style.css"/
     title Hej super chat
   body
-    div(class='grid-container')
-      div(class='top-cell')
-        h1 Ja, men...säg Heeeej! 
-        -if user != nil
-          p logged in as user #{user["name"]}
-      div(class='left-cell')
-        - if users != nil
-          ol
-            - users.each do |u|
-              li(class='friend') = u["name"]
-      ==yield
+    - if showGrid == true 
+      div(class='grid-container')
+        div(class='top-cell')
+          h1 Ja, men...säg Heeeej! 
+          a(href='editAccount') Mitt konto 
+          -if user != nil
+            p logged in as user #{user["name"]}
+        div(class='left-cell')
+          - if users != nil
+            ol
+              - users.each do |u|
+                li(class='friend') = u["name"]
+        ==yield 
+    -else 
+        ==yield
+  
        
     

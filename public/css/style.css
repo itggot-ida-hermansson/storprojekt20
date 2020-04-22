@@ -2,7 +2,7 @@
     display: grid;
     grid-template-columns: 200px auto;
     grid-template-rows: 100px auto;
-    background-color: #000000;
+    background-color: palevioletred;
     padding: 10px;
     width: 100vw;
     height: 100vh;
@@ -10,7 +10,7 @@
 
   .top-cell {
     grid-column: 1 / span 2;
-    background-color: dimgrey;
+    background-color: gray;
     vertical-align:middle;
     text-align: center;
   }
@@ -40,9 +40,7 @@
   }
 
 .account {
-
   background-color: white;
-
 }
   
   

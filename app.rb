@@ -4,7 +4,7 @@ require 'sqlite3'
 
 
 def connect_to_db(path)
-    db = SQLite3::Database.new(path)
+    db = SQLite3::Database.open(path)
     db.results_as_hash = true
     return db
 end
@@ -18,9 +18,9 @@ post('/login') do
     userId=params[:user]
     pwd=params[:pass]
     db = connect_to_db("db/hej.db")
-    userResult = db.query("SELECT * FROM user where userid=?", userId)
+    userResult = db.execute("SELECT * FROM user where userid=?", userId)
     if userResult
-        user = userResult.next
+        user = userResult[0]
         if user
             session[:hejUser] = user['id']
             allUser = db.execute("SELECT * FROM user where userid!=?", userId)    
@@ -42,17 +42,15 @@ post('/user/add') do
     pwd=params[:pass]
     name=params[:name]
     country=params[:country]
-    address1=params[:address1]
-    address2=params[:address2]
+    adress1=params[:adress1]
+    adress2=params[:adress2]
 
- #   db = connect_to_db("db/hej.db")
- db = SQLite3::Database.open("db/hej.db")
- db.results_as_hash = true
-    result = db.query("SELECT MAX(id) as id FROM user;")
-    first_result = result.next
+    db = connect_to_db("db/hej.db")
+    result = db.execute("SELECT MAX(id) as id FROM user;")
+    first_result = result[0]
     id=first_result['id'];
     id=id+1;  
-    db.execute("INSERT INTO user('id', 'userid', 'name', 'country', 'pass', 'adress1', 'adress2') VALUES (?,?,?,?,?,?,?);", id,name,userId,pwd,country,address1,address2);
+    db.execute("INSERT INTO user('id', 'userid', 'name', 'country', 'pass', 'adress1', 'adress2') VALUES (?,?,?,?,?,?,?);", id,name,userId,pwd,country,adress1,adress2);
     slim(:index,locals:{user:'',users:[], message:'Användarnamn', showGrid:false})
 end 
 
@@ -60,13 +58,26 @@ enable :sessions
 get('/editAccount') do 
     id = session[:hejUser]
     db = connect_to_db("db/hej.db")
-    userResult = db.query("SELECT * FROM user WHERE id=?", id)
-    user = userResult.next
+    userResult = db.execute("SELECT * FROM user WHERE id=?", id)
+    user = userResult[0]
     if user
         slim(:editAccount,locals:{user:user,users:[], message:'', showGrid:false})
     end
 end
 
+enable :sessions
+post('/user/save') do
+    id = session[:hejUser]
+    pwd=params[:pass]
+    userId=params[:userid]
+    name=params[:name]
+    country=params[:country]
+    adress1=params[:adress1]
+    adress2=params[:adress2]
 
+    db = connect_to_db("db/hej.db")
+    db.execute("UPDATE user set userid=?, name=?, country=?, pass=?, adress1=?, adress2=? WHERE id=?;", userId,name,country,pwd,adress1,adress2,id);
+    slim(:index,locals:{user:'',users:[], message:'Användarnamn', showGrid:false})
+end 
 
 

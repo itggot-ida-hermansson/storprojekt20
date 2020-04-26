@@ -18,6 +18,7 @@ post('/login') do
     userId=params[:user]
     pwd=params[:pass]
     db = connect_to_db("db/hej.db")
+    puts userId
     userResult = db.execute("SELECT * FROM user where userid=?", userId)
     if userResult
         user = userResult[0]
@@ -30,10 +31,10 @@ post('/login') do
                 slim(:start, locals:{user:user,users:allUser, showGrid:true, message:''})
             end 
         else
-            slim(:index,locals:{user:'',users:[], message:'Fel användare eller passord'})    
+            slim(:index,locals:{user:'',users:[], message:'Hittar inte användare',showGrid:false})    
         end
     else
-        slim(:index,locals:{user:'',users:[], message:'Fel användare eller passord'})    
+        slim(:index,locals:{user:'',users:[], message:'Fel användare eller passord',showGrid:false})    
     end    
 end
 

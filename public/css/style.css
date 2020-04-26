@@ -2,7 +2,7 @@
     display: grid;
     grid-template-columns: 200px auto;
     grid-template-rows: 100px auto;
-    background-color: palevioletred;
+    background-color: lightskyblue;
     padding: 10px;
     width: 100vw;
     height: 100vh;
@@ -10,7 +10,7 @@
 
   .top-cell {
     grid-column: 1 / span 2;
-    background-color: gray;
+    background-color: lightslategray;
     vertical-align:middle;
     text-align: center;
   }
@@ -36,11 +36,57 @@
     text-align: center;
     font-size: 40px;
     font-family: sans-serif;
-    color:olive;
+    color: black;
   }
 
 .account {
   background-color: white;
 }
-  
+
+.login {
+  /*margin: auto;*/
+  height:150px;
+  width:800px;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: lightslategray;
+}
+
+.login form {
+  /*margin: auto;
+  width: 600px;
+  height: 300px;*/
+  margin: 0;
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.login p {
+  text-align: center;
+  font-size: 18px;
+}
+.login-background {
+  position: absolute;
+  left:0px;
+  right: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: lightskyblue;
+}
+
+.skapakonto {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 80px;
+  vertical-align: bottom;
+}
+
+.account label {
+  width:300px;
+}
   

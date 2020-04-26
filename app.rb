@@ -10,7 +10,7 @@ def connect_to_db(path)
 end
    
 get('/') do
-    slim(:index,locals:{user:'',users:[], message:'Användarnamn', showGrid:false})
+    slim(:index,locals:{user:'',users:[], message:'', showGrid:false})
 end
 
 enable :sessions
@@ -22,9 +22,13 @@ post('/login') do
     if userResult
         user = userResult[0]
         if user
-            session[:hejUser] = user['id']
-            allUser = db.execute("SELECT * FROM user where userid!=?", userId)    
-            slim(:start, locals:{user:user,users:allUser, showGrid:true})
+            if pwd != user['pass']
+                slim(:index,locals:{user:'',users:[], showGrid:false, message:'Fel användare eller passord'})   
+            else
+                session[:hejUser] = user['id']
+                allUser = db.execute("SELECT * FROM user where userid!=?", userId)    
+                slim(:start, locals:{user:user,users:allUser, showGrid:true, message:''})
+            end 
         else
             slim(:index,locals:{user:'',users:[], message:'Fel användare eller passord'})    
         end
@@ -77,7 +81,10 @@ post('/user/save') do
 
     db = connect_to_db("db/hej.db")
     db.execute("UPDATE user set userid=?, name=?, country=?, pass=?, adress1=?, adress2=? WHERE id=?;", userId,name,country,pwd,adress1,adress2,id);
-    slim(:index,locals:{user:'',users:[], message:'Användarnamn', showGrid:false})
+    allUsers = db.execute("SELECT * FROM user where userid!=?", userId)   
+    userResult = db.execute("SELECT * FROM user WHERE id=?", id)
+    user = userResult[0] 
+    slim(:start,locals:{user:user,users:allUsers, message:'', showGrid:true})
 end 
 
 

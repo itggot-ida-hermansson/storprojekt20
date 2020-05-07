@@ -1,3 +1,13 @@
-div(class='right-cell')
-    p(class='init-messages-text') lägg till chat meddelande lista
+ div(class='right-cell')
+            p Säger hej till = friend['name']
+            ul(class='msg' style='list-style-type: none')
+              - messages.each do |m|
+                li
+                  div(class='message-text') =m["text"]
+              li
+                form action="/message/add" method="post"
+                    input type="hidden" name="chatId" value=chat['id']
+                    textarea name="newMessage" rows="10" cols="30"
+                    input type="submit" value="Skicka" autocomplete="off"
+    
           

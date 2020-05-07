@@ -18,7 +18,9 @@ html lang="en"
           - if users != nil
             ol
               - users.each do |u|
-                li(class='friend') = u["name"]
+                li(class='friend')
+                  - uri='/startChat/' + u["id"].to_s 
+                  a(href= uri) = u["name"]
         ==yield 
     -else 
         ==yield

@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'slim'
 require 'sqlite3'
+require 'bcrypt'
 
 
 def connect_to_db(path)
@@ -31,7 +32,7 @@ def showChatWindow(chat)
       puts messageResult[i]
     end
     
-    slim(:chat, locals:{user:user,chat:chat,friend:friend,users:allUsers, messages:messageResult, showGrid:true})
+    slim(:"chat/start", locals:{user:user,chat:chat,friend:friend,users:allUsers, messages:messageResult, showGrid:true})
   
   end
    
@@ -50,7 +51,9 @@ post('/login') do
     if userResult
         user = userResult[0]
         if user
-            if pwd != user['pass']
+            password_digest = BCrypt::Password.new (user["pass"])
+          #  password_digest = user["pass"]
+            if password_digest != pwd
                 puts user['pass']
                 slim(:index,locals:{user:'',users:[], showGrid:false, message:'Fel användare eller passord'})   
             else
@@ -66,11 +69,11 @@ post('/login') do
     end    
 end
 
-get('/createAccount') do 
-    slim(:account,locals:{user:'',users:[], message:'', showGrid:false})
+get('/users/new') do 
+    slim(:"users/new",locals:{user:'',users:[], message:'', showGrid:false})
 end 
 
-post('/user/add') do
+post('/users') do
     userId=params[:userid]
     pwd=params[:pass]
     name=params[:name]
@@ -83,18 +86,20 @@ post('/user/add') do
     first_result = result[0]
     id=first_result['id'];
     id=id+1;  
-    db.execute("INSERT INTO user('id', 'userid', 'name', 'country', 'pass', 'adress1', 'adress2') VALUES (?,?,?,?,?,?,?);", id,name,userId,pwd,country,adress1,adress2);
+    password_digest = BCrypt::Password.create(pwd)
+    db.execute("INSERT INTO user('id', 'userid', 'name', 'country', 'pass', 'adress1', 'adress2') VALUES (?,?,?,?,?,?,?);", id,userId,name,country,password_digest,adress1,adress2);
     slim(:index,locals:{user:'',users:[], message:'Användarnamn', showGrid:false})
 end 
 
 enable :sessions
-get('/editAccount') do 
-    id = session[:hejUser]
+get('/users/:id/edit') do 
+    #id = session[:hejUser]
+    id = params[:id]
     db = connect_to_db("db/hej.db")
     userResult = db.execute("SELECT * FROM user WHERE id=?", id)
     user = userResult[0]
     if user
-        slim(:editAccount,locals:{user:user,users:[], message:'', showGrid:false})
+        slim(:"users/edit",locals:{user:user,users:[], message:'', showGrid:false})
     end
 end
 
@@ -108,8 +113,10 @@ post('/user/save') do
     adress1=params[:adress1]
     adress2=params[:adress2]
 
+    password_digest = BCrypt::Password.create(pwd)
+
     db = connect_to_db("db/hej.db")
-    db.execute("UPDATE user set userid=?, name=?, country=?, pass=?, adress1=?, adress2=? WHERE id=?;", userId,name,country,pwd,adress1,adress2,id);
+    db.execute("UPDATE user set userid=?, name=?, country=?, pass=?, adress1=?, adress2=? WHERE id=?;", userId,name,country,password_digest,adress1,adress2,id);
     allUsers = db.execute("SELECT * FROM user where userid!=?", userId)   
     userResult = db.execute("SELECT * FROM user WHERE id=?", id)
     user = userResult[0] 
@@ -117,9 +124,9 @@ post('/user/save') do
 end 
 
 enable :sessions
-get('/startChat/:friend') do
+get('/chat/:friendId/start') do
   id = session[:hejUser]
-  friendId=params[:friend]
+  friendId=params[:friendId]
  
   db = connect_to_db("db/hej.db")
   userResult = db.execute("SELECT * FROM user where id=?;", id)
@@ -152,7 +159,7 @@ get('/startChat/:friend') do
 end
 
 enable :sessions
-post('/message/add') do
+post('/chat/:chatId/message') do
     id = session[:hejUser]
     chatId=params[:chatId]
     message=params[:newMessage]
@@ -168,7 +175,7 @@ post('/message/add') do
         messageId = 1
     end 
 
-    db.execute("INSERT INTO message('id', 'text', 'time', 'chat') VALUES (?, ?, ?, ?);", messageId,message,Time.now.to_time.to_i,chatId)
+    db.execute("INSERT INTO message('id', 'text', 'time', 'chat','user') VALUES (?, ?, ?, ?, ?);", messageId,message,Time.now.to_time.to_i,chatId, id)
 
     chatResult = db.execute("SELECT * from chat WHERE id=?", chatId)
     chat = chatResult[0]

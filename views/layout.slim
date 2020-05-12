@@ -11,7 +11,8 @@ html lang="en"
       div(class='grid-container')
         div(class='top-cell')
           h1 Säg Hej! 
-          a(href='editAccount') Mitt konto 
+          - url = '/users/' + user["id"].to_s + '/edit'
+          a(href= url) Mitt konto 
           -if user != nil
             p inloggad som #{user["name"]}
         div(class='left-cell')
@@ -19,7 +20,7 @@ html lang="en"
             ol
               - users.each do |u|
                 li(class='friend')
-                  - uri='/startChat/' + u["id"].to_s 
+                  - uri= '/chat/' + u["id"].to_s + '/start'  
                   a(href= uri) = u["name"]
         ==yield 
     -else 

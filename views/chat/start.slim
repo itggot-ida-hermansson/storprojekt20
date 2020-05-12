@@ -1,12 +1,14 @@
  div(class='right-cell')
-            p Säger hej till = friend['name']
+            - Header='Säg Hej till ' + friend['name']
+            p =Header
             ul(class='msg' style='list-style-type: none')
               - messages.each do |m|
                 li
-                  div(class='message-text') =m["text"]
+                  - text='[' + user['name'] + '] - ' + m["text"]
+                  div(class='message-text') =text
               li
-                form action="/message/add" method="post"
-                    input type="hidden" name="chatId" value=chat['id']
+                - url = '/chat/' + chat['id'].to_s + '/message'
+                form action= url method="post"
                     textarea name="newMessage" rows="10" cols="30"
                     input type="submit" value="Skicka" autocomplete="off"
     
